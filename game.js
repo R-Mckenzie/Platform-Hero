@@ -4,7 +4,7 @@ let config={
   height: 384,
   parent: 'game',
   pixelArt:true,
-  backgroundColor:'#77c0ff',
+  backgroundColor:'#d3e4ff',
   physics: {
     default: 'arcade',
     arcade: {
@@ -29,8 +29,11 @@ function preload(){
 }
 
 let player;
-let cursors;
+let canJump=false;
 let controls;
+let graceTimerConfig={
+  delay:100, paused:true, startAt:0, loop:true, callback:graceEvent};
+let jumpGraceTimer;
 
 function create(){
   player=this.physics.add.sprite(100, 100, 'player');
@@ -43,6 +46,8 @@ function create(){
   layer.setCollisionByProperty({ collidable: true });
 
   this.physics.add.collider(player, layer);
+
+  jumpGraceTimer = this.time.addEvent(graceTimerConfig);
 
   this.anims.create({
     key: 'left',
@@ -74,6 +79,7 @@ function create(){
     right:Phaser.Input.Keyboard.KeyCodes.D,
     jump:Phaser.Input.Keyboard.KeyCodes.SPACE
   });
+
 }
 
 function update(){
@@ -90,8 +96,21 @@ function update(){
     player.anims.play('stop',true);
   }
 
-  if(controls.jump.isDown&&player.body.onFloor()){
+  if(player.body.onFloor()){
+    canJump=true;
+  }
+  if(!player.body.onFloor()&&jumpGraceTimer.paused){
+    jumpGraceTimer.paused=false;
+  }
+
+  if(controls.jump.isDown&&canJump){
+    canJump=false;
     player.setVelocityY(-250);
     player.anims.play('jump');
   }
+}
+
+function graceEvent(){
+  jumpGraceTimer.reset(graceTimerConfig);
+  canJump=false;
 }
