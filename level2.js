@@ -33,7 +33,7 @@ level2.create=function(){
   }
 
   scoreText=this.add.text(0,0,"Coins: "+score,{color:'#000000'});
-  healthText=this.add.text(0,30,"Health: "+health,{color:'#000000'});
+  healthText=this.add.text(0,18,"Health: "+health,{color:'#000000'});
 }
 
 level2.update=function(time, delta){

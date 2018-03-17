@@ -10,6 +10,7 @@ Enemy.prototype.create=function(collider, context){
   this.sprite.setCollideWorldBounds(true);
 
   this.direction=100;
+  this.anim='left';
 }
 
 Enemy.prototype.update=function(){
@@ -21,4 +22,6 @@ Enemy.prototype.move=function(){
     this.direction*=-1;
   }
   this.sprite.setVelocityX(this.direction);
+  this.anim=(this.direction>0)?'enemyRight':'enemyLeft';
+  this.sprite.anims.play(this.anim, true);
 }
