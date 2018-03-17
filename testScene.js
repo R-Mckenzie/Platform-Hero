@@ -13,7 +13,8 @@ let controls;
 let coinLayer;
 let scoreText;
 let healthText;
-let score;
+let coinsCollected;
+let score=0;
 
 var map;
 var tiles;
@@ -21,7 +22,7 @@ var coins;
 var groundlayer;
 
 testScene.create=function(){
-  score=0;
+  coinsCollected=0;
   map=this.make.tilemap({key:'map'});
   tiles=map.addTilesetImage('Dirt', 'dirt');
   coins=map.addTilesetImage('Coin', 'coin');
@@ -47,8 +48,8 @@ testScene.create=function(){
     jump:Phaser.Input.Keyboard.KeyCodes.SPACE
   });
 
-  scoreText=this.add.text(0,0,"Coins: 0",{color:'#000000'});
-  healthText=this.add.text(0,30,"Health: 2",{color:'#000000'});
+  scoreText=this.add.text(0,0,"Coins: "+score,{color:'#000000'});
+  healthText=this.add.text(0,30,"Health: "+health,{color:'#000000'});
 }
 
 testScene.update=function(time, delta){
@@ -58,7 +59,7 @@ testScene.update=function(time, delta){
     e.move();
   })
 
-  if(score>=12){
+  if(coinsCollected>=12){
     enemies.length=0;
     player.playerSprite.destroy();
     this.scene.stop('testScene');
@@ -66,7 +67,12 @@ testScene.update=function(time, delta){
   }
 
   if(!player.alive){
-
+    enemies.length=0;
+    health=2;
+    score=0;
+    player.playerSprite.destroy();
+    this.scene.stop('testScene');
+    this.scene.start('gameOverScene');
   }
 }
 
@@ -74,6 +80,7 @@ function hitCoin(sprite, tile){
   if(tile.index!=-1){
     console.log("coin hit");
     score++;
+    coinsCollected++;
     coinLayer.removeTileAt(tile.x, tile.y);
     scoreText.setText('Coins: '+score);
   }

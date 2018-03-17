@@ -11,6 +11,7 @@ var map;
 var groundlayer;
 
 level2.create=function(){
+  coinsCollected=0;
   map=this.make.tilemap({key:'map2'});
   tiles=map.addTilesetImage('Dirt', 'dirt');
   coins=map.addTilesetImage('Coin', 'coin');
@@ -31,8 +32,8 @@ level2.create=function(){
     this.physics.add.overlap(enemies[i].sprite, player.playerSprite, player.gotHit);
   }
 
-  scoreText=this.add.text(0,0,"Coins: 0",{color:'#000000'});
-  healthText=this.add.text(0,30,"Health: 2",{color:'#000000'});
+  scoreText=this.add.text(0,0,"Coins: "+score,{color:'#000000'});
+  healthText=this.add.text(0,30,"Health: "+health,{color:'#000000'});
 }
 
 level2.update=function(time, delta){
@@ -41,11 +42,17 @@ level2.update=function(time, delta){
   enemies.forEach(function(e){
     e.move();
   })
-  if(!player.alive){
 
+  if(!player.alive){
+    enemies.length=0;
+    health=2;
+    score=0;
+    player.playerSprite.destroy();
+    this.scene.stop('level2');
+    this.scene.start('gameOverScene');
   }
 
-  if(score>=19+12){
+  if(coinsCollected>=19){
     enemies.length=0;
     player.playerSprite.destroy();
     this.scene.stop('level2');
@@ -57,6 +64,7 @@ function hitCoin(sprite, tile){
   if(tile.index!=-1){
     console.log("coin hit");
     score++;
+    coinsCollected++;
     coinLayer.removeTileAt(tile.x, tile.y);
     scoreText.setText('Coins: '+score);
   }
