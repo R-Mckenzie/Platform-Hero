@@ -9,10 +9,13 @@ var health=2;
 var time;
 var lastFlickerTime=0;
 var playerSprite;
+var context;
 
-Player.prototype.create=function(collider, context){
-  this.playerSprite=context.physics.add.sprite(collider.xPos, collider.yPos, 'player');
+Player.prototype.create=function(collider, ctx){
+  this.playerSprite=ctx.physics.add.sprite(collider.xPos, collider.yPos, 'player');
   this.canJump=false;
+
+  context=ctx;
 
   this.playerSprite.setSize(collider.width, collider.height);
   this.playerSprite.setCollideWorldBounds(true);
@@ -21,6 +24,12 @@ Player.prototype.create=function(collider, context){
   this.flickerWait=200;
   this.lastFlickerTime=0;
   this.red=false;
+
+  this.alive=true;
+}
+
+Player.prototype.getHealth=function(){
+  return health;
 }
 
 Player.prototype.update=function(controls, currentTime){
@@ -42,6 +51,10 @@ Player.prototype.update=function(controls, currentTime){
     isInvulnerable=false;
     this.red=false;
     console.log("uninvuln");
+  }
+
+  if(health<=0){
+    this.die();
   }
   this.move(controls);
 }
@@ -72,9 +85,18 @@ Player.prototype.jump=function(){
 
 Player.prototype.gotHit=function(){
   if(!isInvulnerable){
+    health--;
     hitTime=time;
     lastFlickerTime=time;
     isInvulnerable=true;
+    if(health==0){
+      return;
+    }
     console.log("hit");
   }
+}
+
+Player.prototype.die=function(){
+  console.log("dead");
+  this.alive=false;
 }
